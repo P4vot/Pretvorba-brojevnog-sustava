@@ -1,10 +1,9 @@
-﻿
 #include "header.h"
 
 int main() {
 	konverzije = malloc(maxKonverzija * sizeof(Konverzija));
 	if (konverzije == NULL) {
-		printf("Alokacija memorije nije uspjela.\n");
+		perror("Alokacija memorije nije uspjela.\n");
 		return 1;
 	}
 
@@ -18,10 +17,10 @@ int main() {
 		printf("5. Heksadecimalni u Binarni\n");
 		printf("6. Binarni u Heksadecimalni\n");
 		printf("7. Pregledaj konverzije\n");
-		printf("8. Azuriraj konverziju\n");
-		printf("9. Izbrisi konverziju\n");
+		printf("8. Ažuriraj konverziju\n");
+		printf("9. Izbriši konverziju\n");
 		printf("10. Spremi konverzije u datoteku\n");
-		printf("11. Izbrisi datoteku\n");
+		printf("11. Izbriši datoteku\n");
 		printf("12. Izlaz\n");
 		printf("Unesite svoj izbor: ");
 		scanf("%d", &izbor);
@@ -134,7 +133,7 @@ int main() {
 			free(konverzije);
 			return 0;
 		default:
-			printf("Nevažeći izbor. Molimo unesite vazecu opciju.\n");
+			printf("Nevažeći izbor. Molimo unesite važeću opciju.\n");
 		}
 	}
 }
