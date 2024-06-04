@@ -13,7 +13,7 @@ char* decimalUOkatal(int decimal);
 int okatalUDecimal(char okatal[]);
 char* heksadecimalniUBinarni(char hex[]);
 char* binarniUHeksadecimalni(char binarni[]);
-char* _strrev(char* str);
+char* strrev(char* str);
 
 // Struct for storing conversion records
 typedef struct {
