@@ -1,4 +1,4 @@
-﻿#include "header.h"
+#include "header.h"
 
 // Global variables
 Konverzija* konverzije;
@@ -18,8 +18,8 @@ void dodajKonverziju(const char* vrsta, const char* ulaz, const char* izlaz) {
 }
 
 void pregledajKonverzije() {
-	if (brojKonverzija == 0) {
-		printf("Nema zapisanih konverzija.\n");
+	if (brojKonverzija == NULL) {
+		perror("Greška pri otvaranju izvorne datoteke");
 		return;
 	}
 	for (int i = 0; i < brojKonverzija; i++) {
@@ -29,7 +29,7 @@ void pregledajKonverzije() {
 
 void azurirajKonverziju(int indeks, const char* ulaz, const char* izlaz) {
 	if (indeks < 0 || indeks >= brojKonverzija) {
-		printf("Nevazeci indeks.\n");
+		printf("Nevažeći indeks.\n");
 		return;
 	}
 	strcpy(konverzije[indeks].ulaz, ulaz);
@@ -38,7 +38,7 @@ void azurirajKonverziju(int indeks, const char* ulaz, const char* izlaz) {
 
 void izbrisiKonverziju(int indeks) {
 	if (indeks < 0 || indeks >= brojKonverzija) {
-		printf("Nevazeci indeks.\n");
+		printf("Nevažeći indeks.\n");
 		return;
 	}
 	for (int i = indeks; i < brojKonverzija - 1; i++) {
@@ -125,7 +125,7 @@ char* binarniUHeksadecimalni(char binarni[]) {
 	strcpy(popunjeniBinarni + padding, binarni);
 
 	char* binarniHexZnakovi[] = { "0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111",
-								  "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111" };
+	 "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111" };
 	char heksadecimalni[33] = ""; // Alociraj prostor za 32-znamenkasti heksadecimalni niz
 
 	for (int i = 0; i < duljina + padding; i += 4) {
@@ -149,21 +149,28 @@ char* binarniUHeksadecimalni(char binarni[]) {
 void spremiKonverzijeUDatoteku(const char* nazivDatoteke) {
 	FILE* file = fopen(nazivDatoteke, "w");
 	if (file == NULL) {
-		printf("Greska pri otvaranju datoteke za pisanje.\n");
+		printf("Greška pri otvaranju datoteke za pisanje.\n");
 		return;
 	}
+
+	long currentPos = ftell(file); // Get the current position of the file pointer
+
 	for (int i = 0; i < brojKonverzija; i++) {
 		fprintf(file, "%s: %s -> %s\n", konverzije[i].vrsta, konverzije[i].ulaz, konverzije[i].izlaz);
 	}
+
+	fseek(file, currentPos, SEEK_SET); // Move the file pointer to the previously saved position
+	rewind(file); // Move the file pointer to the beginning of the file
+
 	fclose(file);
 	printf("Konverzije su spremljene u datoteku %s\n", nazivDatoteke);
 }
 
 void obrisiDatoteku(const char* nazivDatoteke) {
 	if (remove(nazivDatoteke) == 0) {
-		printf("Datoteka %s je uspjesno obrisana.\n", nazivDatoteke);
+		printf("Datoteka %s je uspješno obrisana.\n", nazivDatoteke);
 	}
 	else {
-		printf("Greska pri brisanju datoteke %s.\n", nazivDatoteke);
+		printf("Greška pri brisanju datoteke %s.\n", nazivDatoteke);
 	}
 }
