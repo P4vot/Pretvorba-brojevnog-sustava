@@ -6,20 +6,25 @@ int brojKonverzija = 0;
 int maxKonverzija = 10;
 
 // Function implementations
-void dodajKonverziju(const char* vrsta, const char* ulaz, const char* izlaz) {
+void dodajKonverziju(const char* vrsta, const char* ulaz, const char* rezultat) {
 	if (brojKonverzija >= maxKonverzija) {
 		maxKonverzija *= 2;
 		konverzije = realloc(konverzije, maxKonverzija * sizeof(Konverzija));
+		if (konverzije == NULL) {
+			perror("Realokacija memorije nije uspjela.\n");
+			exit(1);
+		}
 	}
+
 	strcpy(konverzije[brojKonverzija].vrsta, vrsta);
 	strcpy(konverzije[brojKonverzija].ulaz, ulaz);
-	strcpy(konverzije[brojKonverzija].izlaz, izlaz);
+	strcpy(konverzije[brojKonverzija].izlaz, rezultat);
 	brojKonverzija++;
 }
 
 void pregledajKonverzije() {
-	if (brojKonverzija == NULL) {
-		perror("Greška pri otvaranju izvorne datoteke");
+	if (brojKonverzija == 0) {
+		printf("Nema konverzija za prikaz.\n");
 		return;
 	}
 	for (int i = 0; i < brojKonverzija; i++) {
@@ -27,14 +32,93 @@ void pregledajKonverzije() {
 	}
 }
 
-void azurirajKonverziju(int indeks, const char* ulaz, const char* izlaz) {
+int usporediKonverzije(const void* a, const void* b) {
+	Konverzija* konverzijaA = (Konverzija*)a;
+	Konverzija* konverzijaB = (Konverzija*)b;
+	return strcmp(konverzijaA->vrsta, konverzijaB->vrsta);
+}
+
+void sortirajPoKategoriji() {
+	if (brojKonverzija == 0) {
+		printf("Nema dostupnih konverzija za sortiranje.\n");
+		return;
+	}	qsort(konverzije, brojKonverzija, sizeof(Konverzija), usporediKonverzije);
+
+	printf("Konverzije su sortirane po kategoriji.\n");
+}
+
+void azurirajKonverziju(int indeks, const char* noviUlaz) {
 	if (indeks < 0 || indeks >= brojKonverzija) {
 		printf("Nevažeći indeks.\n");
 		return;
 	}
-	strcpy(konverzije[indeks].ulaz, ulaz);
-	strcpy(konverzije[indeks].izlaz, izlaz);
+
+	// Ažuriraj ulaz
+	strcpy(konverzije[indeks].ulaz, noviUlaz);
+
+	// Ažuriraj izlaz (rezultat) na temelju vrste konverzije
+	char* noviIzlaz = NULL;
+	if (strcmp(konverzije[indeks].vrsta, "Decimalni u Binarni") == 0) {
+		noviIzlaz = decimalUBinarni(atoi(noviUlaz));
+	}
+	else if (strcmp(konverzije[indeks].vrsta, "Binarni u Decimalni") == 0) {
+		int decimalniRezultat = binarniUDecimal(noviUlaz);
+		snprintf(konverzije[indeks].izlaz, sizeof(konverzije[indeks].izlaz), "%d", decimalniRezultat);
+		return;  // Nije potrebna dinamička memorija
+	}
+	else if (strcmp(konverzije[indeks].vrsta, "Decimalni u Oktalni") == 0) {
+		noviIzlaz = decimalUOkatal(atoi(noviUlaz));
+	}
+	else if (strcmp(konverzije[indeks].vrsta, "Oktalni u Decimalni") == 0) {
+		int decimalniRezultat = okatalUDecimal(noviUlaz);
+		snprintf(konverzije[indeks].izlaz, sizeof(konverzije[indeks].izlaz), "%d", decimalniRezultat);
+		return;  // Nije potrebna dinamička memorija
+	}
+	else if (strcmp(konverzije[indeks].vrsta, "Heksadecimalni u Binarni") == 0) {
+		noviIzlaz = heksadecimalniUBinarni(noviUlaz);
+	}
+	else if (strcmp(konverzije[indeks].vrsta, "Binarni u Heksadecimalni") == 0) {
+		noviIzlaz = binarniUHeksadecimalni(noviUlaz);
+	}
+	else {
+		printf("Nepoznata vrsta konverzije.\n");
+		return;
+	}
+
+	// Ažuriraj izlaz
+	strcpy(konverzije[indeks].izlaz, noviIzlaz);
+
+	// Oslobodi memoriju ako je izlaz dinamički alociran
+	free(noviIzlaz);
+
+	printf("Konverzija uspješno ažurirana.\n");
 }
+
+
+void pretraziKonverzije(const char* vrstaPretrage) {
+	int pronadeno = 0;
+	for (int i = 0; i < brojKonverzija; i++) {
+		if (strcmp(konverzije[i].vrsta, vrstaPretrage) == 0) {
+			printf("%d. %s: %s -> %s\n", i + 1, konverzije[i].vrsta, konverzije[i].ulaz, konverzije[i].izlaz);
+			pronadeno = 1;
+		}
+	}
+	if (!pronadeno) {
+		printf("Nema konverzija za vrstu: %s\n", vrstaPretrage);
+	}
+}
+//void inicijalizirajKonverzije(const char* nazivDatoteke) {
+	//FILE* file = fopen(nazivDatoteke, "r");
+//	if (file != NULL) {
+		// Ako datoteka postoji, učitaj konverzije iz nje
+//		KonverzijeIzDatoteke(nazivDatoteke);
+	//	fclose(file);
+//	}
+	//else {
+		// Ako datoteka ne postoji, samo nastavi (možete napraviti i inicijalizaciju prazne datoteke ako želite)
+	//	printf("Datoteka %s ne postoji. Početna inicijalizacija...\n", nazivDatoteke);
+//	}
+//}
 
 void izbrisiKonverziju(int indeks) {
 	if (indeks < 0 || indeks >= brojKonverzija) {
@@ -145,7 +229,6 @@ char* binarniUHeksadecimalni(char binarni[]) {
 
 	return _strdup(heksadecimalni);
 }
-
 void spremiKonverzijeUDatoteku(const char* nazivDatoteke) {
 	FILE* file = fopen(nazivDatoteke, "w");
 	if (file == NULL) {
