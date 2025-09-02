@@ -3,28 +3,28 @@
 // Funkcije za provjeru valjanosti brojeva
 int validanDecimalni(const char* ulaz) {
     if (!ulaz) return 0;
-    for (size_t i = 0; i < strlen(ulaz); i++)
+    for (int i = 0; i < strlen(ulaz); i++)
         if (ulaz[i] < '0' || ulaz[i] > '9') return 0;
     return 1;
 }
 
 int validanBinarni(const char* ulaz) {
     if (!ulaz) return 0;
-    for (size_t i = 0; i < strlen(ulaz); i++)
+    for (int i = 0; i < strlen(ulaz); i++)
         if (ulaz[i] != '0' && ulaz[i] != '1') return 0;
     return 1;
 }
 
 int validanOktalni(const char* ulaz) {
     if (!ulaz) return 0;
-    for (size_t i = 0; i < strlen(ulaz); i++)
+    for (int i = 0; i < strlen(ulaz); i++)
         if (ulaz[i] < '0' || ulaz[i] > '7') return 0;
     return 1;
 }
 
 int validanHeksadecimalni(const char* ulaz) {
     if (!ulaz) return 0;
-    for (size_t i = 0; i < strlen(ulaz); i++) {
+    for (int i = 0; i < strlen(ulaz); i++) {
         char c = ulaz[i];
         if (!((c >= '0' && c <= '9') ||
             (c >= 'A' && c <= 'F') ||
