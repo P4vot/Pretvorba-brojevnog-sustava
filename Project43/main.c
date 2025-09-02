@@ -1,128 +1,186 @@
 #include "header.h"
 
-int main() {
-    konverzije = malloc(maxKonverzija * sizeof(Konverzija));
-    if (konverzije == NULL) {
-        perror("Alokacija memorije nije uspjela.\n");
-        return 1;
-    }
-
+int main(void) {
     int izbor;
-    while (1) {
-        printf("\nIzbornik:\n");
-        printf("1. Decimalni u Binarni\n");
-        printf("2. Binarni u Decimalni\n");
-        printf("3. Decimalni u Oktalni\n");
-        printf("4. Oktalni u Decimalni\n");
-        printf("5. Heksadecimalni u Binarni\n");
-        printf("6. Binarni u Heksadecimalni\n");
-        printf("7. Pregledaj konverzije\n");
-        printf("8. Ažuriraj konverziju\n");
-        printf("9. Izbriši konverziju\n");
-        printf("10. Spremi konverzije u datoteku\n");
-        printf("11. Izbriši datoteku\n");
-        printf("12. Sortiraj po kategoriji\n");  
-        printf("13. Pretraži konverzije\n"); 
-        printf("14. Učitaj konverzije iz datoteke\n");
-        printf("15. Izlaz\n");
-        printf("Unesite svoj izbor: ");
-        scanf("%d", &izbor);
+    char ulaz[128], izlaz[128];
 
-        char ulaz[100];
-        char* rezultat;
-        int binarniRezultat, okatalniRezultat, indeks;
+    for (;;) {
+        printf("\n--- Glavni izbornik ---\n");
+        printf("1. Decimalni u binarni\n");
+        printf("2. Binarni u dekadski\n");
+        printf("3. Decimalni u oktalni\n");
+        printf("4. Oktalni u dekadski\n");
+        printf("5. Heksadekadski u binarni\n");
+        printf("6. Binarni u heksadekadski\n");
+        printf("7. Prikaži konverzije\n");
+        printf("8. Ažuriraj konverziju\n");
+        printf("9. Obriši konverziju\n");
+        printf("10. Spremi u datoteku\n");
+        printf("11. Obriši datoteku\n");
+        printf("12. Sortiraj po vrsti\n");
+        printf("13. Pretraži (linearno)\n");
+        printf("14. Pretraži (bsearch)\n");
+        printf("15. Pretraži (rekurzivno)\n");
+        printf("16. Rad s povezanim popisom\n");
+        printf("0. Izlaz\n");
+        printf("Odabir: ");
+        if (scanf("%d", &izbor) != 1) {
+            puts("Neispravan unos.");
+            break;
+        }
+
+        int indeks;
+        char* rezultat = NULL;
 
         switch (izbor) {
         case 1:
-            printf("Unesite decimalni broj: ");
-            scanf("%s", ulaz);
-            rezultat = decimalUBinarni(atoi(ulaz));
-            printf("Decimalni u Binarni: %s\n", rezultat);
+            printf("Unesi decimalni: ");
+            scanf("%127s", ulaz);
+            rezultat = decimalniUBinarni(atoi(ulaz));
+            if (!rezultat) { puts("Greška: nema memorije."); break; }
+            printf("Rezultat: %s\n", rezultat);
             dodajKonverziju("Decimalni u Binarni", ulaz, rezultat);
-            free(rezultat);
+            free(rezultat); rezultat = NULL;
             break;
+
         case 2:
-            printf("Unesite binarni broj: ");
-            scanf("%s", ulaz);
-            binarniRezultat = binarniUDecimal(ulaz);
-            printf("Binarni u Decimalni: %d\n", binarniRezultat);
-            snprintf(ulaz, sizeof(ulaz), "%d", binarniRezultat);
-            dodajKonverziju("Binarni u Decimalni", ulaz, ulaz);
+            printf("Unesi binarni: ");
+            scanf("%127s", ulaz);
+            snprintf(izlaz, sizeof(izlaz), "%d", binarniUDekadski(ulaz));
+            printf("Rezultat: %s\n", izlaz);
+            dodajKonverziju("Binarni u Dekadski", ulaz, izlaz);
             break;
+
         case 3:
-            printf("Unesite decimalni broj: ");
-            scanf("%s", ulaz);
-            rezultat = decimalUOkatal(atoi(ulaz));
-            printf("Decimalni u Oktalni: %s\n", rezultat);
+            printf("Unesi decimalni: ");
+            scanf("%127s", ulaz);
+            rezultat = decimalniUoktalni(atoi(ulaz));
+            if (!rezultat) { puts("Greška: nema memorije."); break; }
+            printf("Rezultat: %s\n", rezultat);
             dodajKonverziju("Decimalni u Oktalni", ulaz, rezultat);
-            free(rezultat);
+            free(rezultat); rezultat = NULL;
             break;
+
         case 4:
-            printf("Unesite oktalni broj: ");
-            scanf("%s", ulaz);
-            okatalniRezultat = okatalUDecimal(ulaz);
-            printf("Oktalni u Decimalni: %d\n", okatalniRezultat);
-            snprintf(ulaz, sizeof(ulaz), "%d", okatalniRezultat);
-            dodajKonverziju("Oktalni u Decimalni", ulaz, ulaz);
+            printf("Unesi oktalni: ");
+            scanf("%127s", ulaz);
+            snprintf(izlaz, sizeof(izlaz), "%d", oktalniUDekadski(ulaz));
+            printf("Rezultat: %s\n", izlaz);
+            dodajKonverziju("Oktalni u Dekadski", ulaz, izlaz);
             break;
+
         case 5:
-            printf("Unesite heksadecimalni broj: ");
-            scanf("%s", ulaz);
-            rezultat = heksadecimalniUBinarni(ulaz);
-            printf("Heksadecimalni u Binarni: %s\n", rezultat);
-            dodajKonverziju("Heksadecimalni u Binarni", ulaz, rezultat);
-            free(rezultat);
+            printf("Unesi heksadekadski: ");
+            scanf("%127s", ulaz);
+            rezultat = heksadekadskiUBinarni(ulaz);
+            if (!rezultat) { puts("Greška: nema memorije."); break; }
+            printf("Rezultat: %s\n", rezultat);
+            dodajKonverziju("Heksadekadski u Binarni", ulaz, rezultat);
+            free(rezultat); rezultat = NULL;
             break;
+
         case 6:
-            printf("Unesite binarni broj: ");
-            scanf("%s", ulaz);
-            rezultat = binarniUHeksadecimalni(ulaz);
-            printf("Binarni u Heksadecimalni: %s\n", rezultat);
-            dodajKonverziju("Binarni u Heksadecimalni", ulaz, rezultat);
-            free(rezultat);
+            printf("Unesi binarni: ");
+            scanf("%127s", ulaz);
+            rezultat = binarniUHeksadekadski(ulaz);
+            if (!rezultat) { puts("Greška: nema memorije."); break; }
+            printf("Rezultat: %s\n", rezultat);
+            dodajKonverziju("Binarni u Heksadekadski", ulaz, rezultat);
+            free(rezultat); rezultat = NULL;
             break;
+
         case 7:
-            pregledajKonverzije();
+            prikaziKonverzije();
             break;
+
         case 8:
-            pregledajKonverzije();
-            printf("Unesite indeks konverzije za ažuriranje: ");
+            prikaziKonverzije();
+            printf("Indeks za ažuriranje: ");
             scanf("%d", &indeks);
-            indeks--;
-            printf("Unesite novi ulaz: ");
-            scanf("%s", ulaz);
-            azurirajKonverziju(indeks,ulaz,2 );
+            --indeks;
+            if (indeks < 0 || indeks >= brojKonverzija) {
+                puts("Neispravan indeks.");
+                break;
+            }
+            printf("Novi ulaz: ");
+            scanf("%127s", ulaz);
+            azurirajKonverziju(indeks, ulaz);
             break;
+
         case 9:
-            pregledajKonverzije();
-            printf("Unesite indeks konverzije za brisanje: ");
+            prikaziKonverzije();
+            printf("Indeks za brisanje: ");
             scanf("%d", &indeks);
-            indeks--;
-            izbrisiKonverziju(indeks);
+            --indeks;
+            obrisiKonverziju(indeks);
             break;
+
         case 10:
             spremiKonverzijeUDatoteku("konverzije.txt");
             break;
+
         case 11:
             obrisiDatoteku("konverzije.txt");
             break;
+
         case 12:
-            sortirajPoKategoriji();  
+            sortirajKonverzijePoVrsti();
             break;
+
         case 13:
-            printf("Unesite vrstu konverzije za pretragu (npr. 'Decimalni u Binarni'): ");
-            scanf(" %[^\n]", ulaz);  // Unesi cijeli redak
+            printf("Vrsta (točan naziv): ");
+            scanf(" %99[^\n]", ulaz);
             pretraziKonverzije(ulaz);
             break;
-      //      printf("Unesite naziv datoteke za učitavanje: ");
-        //    scanf(" %[^\n]", ulaz);  // Unesi cijeli redak
-        //    KonverzijeIzDatoteke(ulaz);
-         //   break;
+
+        case 14:
+            printf("Vrsta (bsearch): ");
+            scanf(" %99[^\n]", ulaz);
+            sortirajKonverzijePoVrsti(); /* obavezno prije bsearch */
+            {
+                const Konverzija* k = pronadiKonverzijuBsearch(ulaz);
+                if (k) printf("Pronađeno (bsearch): %s -> %s\n", k->ulaz, k->izlaz);
+                else   printf("Nema rezultata.\n");
+            }
+            break;
+
         case 15:
-            free(konverzije);
+            printf("Vrsta (rekurzija): ");
+            scanf(" %99[^\n]", ulaz);
+            sortirajKonverzijePoVrsti();
+            rekurzivnaPretraga(0, brojKonverzija - 1, ulaz);
+            break;
+
+        case 16: {
+            int p;
+            printf("\n--- Povezani popis ---\n1. Dodaj  2. Prikaži  3. Obriši  4. Nazad\nOdabir: ");
+            scanf("%d", &p);
+            if (p == 1) {
+                printf("Vrsta: ");  scanf(" %99[^\n]", ulaz);
+                printf("Ulaz: ");   scanf("%127s", izlaz);
+                listaDodajKonverziju(ulaz, izlaz, "Primjer");
+            } else if (p == 2) {
+                listaPrikaziKonverzije();
+            } else if (p == 3) {
+                printf("Vrsta: ");  scanf(" %99[^\n]", ulaz);
+                printf("Ulaz: ");   scanf("%127s", izlaz);
+                listaObrisiKonverziju(ulaz, izlaz);
+            }
+            break;
+        }
+
+        case 0:
+            free(globalneKonverzije); globalneKonverzije = NULL;
+            listaOslobodi();
             return 0;
+
         default:
-            printf("Nevažeći izbor. Molimo unesite važeću opciju.\n");
+            printf("Nepostojeća opcija.\n");
         }
     }
+
+    /* fallback čišćenje ako se izađe iz petlje */
+    free(globalneKonverzije); globalneKonverzije = NULL;
+    listaOslobodi();
+    return 0;
 }
